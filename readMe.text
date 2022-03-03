@@ -1,0 +1,55 @@
+npm  install sequelize 
+npm  install tedious 
+npm  install sequelize-cli 
+npm  install sequelize-auto 
+
+
+--Config ayarlaması
+sequelize-auto -o "./src/models" -d "Hotel" -h "DESKTOP-A63U997" -u "sa" -p 1433 -x "1234" -e "mssql"
+
+
+
+
+
+
+--DAO 'nun içerikkalıbı 
+const Sequelize = require("sequelize");
+const initModels = require("../models/init-models");
+
+const sequelize = new Sequelize("Hotel", "sa", "1234", {
+  host: "DESKTOP-A63U997",
+  dialect: "mssql" /* one of 'mysql' | 'mariadb' | 'postgres' | 'mssql' */,
+});
+const model = new initModels(sequelize);
+ 
+ //-- Sorgu
+ exports.RoomTypeListFunction = async function (callback) {
+  var FUNCTIONNAME = "RoomTypeListFunction";
+
+  var sqlStatement = `
+    SELECT [RoomTypeID]
+    ,[RoomTypeName]
+  FROM [dbo].[RoomTypes] 
+  ORDER BY [RoomTypeName] ASC	`;
+
+  try {
+    var result = await Model.RoomTypes.findAll(); //SELECT SORGUSU
+    var returnVal = [
+      {
+        result: "Success",
+        message: "",
+        RoomTypes: result,
+      },
+    ];
+  } catch (err) {
+    var returnVal = {
+      result: "Failed",
+      message: "Hata oluştu, lütfen daha sonra tekrar deneyin." + err,
+      RoomTypes: null,
+    };
+  }
+
+  console.log(sqlStatement);
+
+  callback(null, returnVal);
+};
